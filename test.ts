@@ -5,6 +5,8 @@ const pluralize = require("pluralize");
 const player = require("play-sound")((opts = {}));
 const vorpal = require("vorpal")();
 
+// "node test.ts" to initialize the whole thing, then input "qb"
+
 // Content of created files
 const contentController = require("./content/src/controllers/controllerFile");
 const contentIndex = require("./content/src/indexFile");
@@ -275,7 +277,7 @@ First letter uppercase pluralizing will be automatically applied throughout the 
 	.action(function (_, callback) {
 		let modelArr = [];
 		let confirmedModelsArr = [];
-		const backendName = appName;
+		let backendName = appName;
 
 		function upperFirstLetter(string) {
 			return string.charAt(0).toUpperCase() + string.slice(1);
@@ -368,6 +370,7 @@ Example:` +
 					});
 				})();
 			} else {
+				// QB backend doesn't exist
 				console.log(
 					chalk.red(
 						'Error: Input "' +
@@ -421,6 +424,7 @@ Type in the name of the backend:
 				},
 			]).then((result) => {
 				modelCreation(result.backendName);
+				backendName = result.backendName
 			});
 		}
 
