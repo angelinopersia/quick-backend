@@ -402,6 +402,7 @@ chosen 'qb' backend directory.`
 				if (err) {
 					return console.log("Can't scan directory: " + err);
 				} else {
+					// Must figure out identifying if QB backend, then use dir name for prompt message
 					files.forEach(function (file) {
 						const qbPath = path.join(file + "/src/");
 						fs.readdir(qbPath, function (err, qbFiles) {
