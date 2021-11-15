@@ -392,21 +392,8 @@ Make sure you execute the ` +
 								chalk.hex("#0099AA")("qb-mdl") +
 								` command in the directory preceding your
 chosen backend directory.`
-						) +
-						"\nContent of current directory:\n"
+						)
 				);
-				const directoryPath = path.join(__dirname);
-				fs.readdir(directoryPath, function (err, files) {
-					if (err) {
-						return console.log("Can't scan directory: " + err);
-					} else {
-						files.forEach(function (file) {
-							console.log("  " + file);
-						});
-						console.log("\n");
-						callback();
-					}
-				});
 			}
 		};
 
@@ -424,7 +411,7 @@ Type in the name of the backend:
 				},
 			]).then((result) => {
 				modelCreation(result.backendName);
-				backendName = result.backendName
+				backendName = result.backendName;
 			});
 		}
 
@@ -432,6 +419,7 @@ Type in the name of the backend:
 			const ucItem = upperFirstLetter(item);
 			const plurItem = pluralize(item, 0);
 
+			// THIS AREA TO BE EDITED
 			await this.prompt([
 				{
 					type: "input",
@@ -768,9 +756,8 @@ Example:` +
 						useRouteAddition(newContent);
 					};
 					const useRouteAddition = (updatedContent) => {
-						const useRoutesLine = updatedContent.search(
-							"// USE ROUTES"
-						);
+						const useRoutesLine =
+							updatedContent.search("// USE ROUTES");
 						const newContent = insert(
 							updatedContent,
 							"\napp.use(" + plurItem + "Route);",
