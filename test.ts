@@ -373,13 +373,9 @@ Example:` +
 				// QB backend doesn't exist
 				console.log(
 					chalk.red(
-						'Error: Input "' +
-							backendName +
-							`" did not match any folder name in the current directory, 
-or "/src/models/" doesn't exist in "` +
-							backendName +
-							`".`
+						'Error: no such file or directoy: "' + backendName
 					) +
+						chalk.red('"') +
 						chalk.yellow(
 							`
 Make sure you've executed the ` +
@@ -390,29 +386,34 @@ before executing the ` +
 								` command.
 Make sure you execute the ` +
 								chalk.hex("#0099AA")("qb-mdl") +
-								` command in the directory preceding your
-chosen backend directory.`
-						) +
-						"\nContent of current directory:\n"
+								` command in the directory containing your
+chosen 'qb' backend directory.`
+						)
 				);
-				const directoryPath = path.join(__dirname);
-				fs.readdir(directoryPath, function (err, files) {
-					if (err) {
-						return console.log("Can't scan directory: " + err);
-					} else {
-						files.forEach(function (file) {
-							console.log("  " + file);
-						});
-						console.log("\n");
-						callback();
-					}
-				});
 			}
 		};
 
 		if (backendName !== "") {
 			modelCreation(backendName);
 		} else {
+			let myStr = "";
+			const directoryPath = path.join(__dirname);
+			fs.readdir(directoryPath, function (err, files) {
+				if (err) {
+					return console.log("Can't scan directory: " + err);
+				} else {
+					files.forEach(function (file) {
+						const qbPath = path.join(file + "/src/");
+						fs.readdir(qbPath, function (err, qbFiles) {
+							if (qbFiles !== undefined) {
+								console.log(file + " contains " + qbFiles);
+							}
+						});
+					});
+					// console.log(myStr);
+					callback();
+				}
+			});
 			this.prompt([
 				{
 					type: "input",
@@ -424,7 +425,7 @@ Type in the name of the backend:
 				},
 			]).then((result) => {
 				modelCreation(result.backendName);
-				backendName = result.backendName
+				backendName = result.backendName;
 			});
 		}
 
@@ -768,9 +769,8 @@ Example:` +
 						useRouteAddition(newContent);
 					};
 					const useRouteAddition = (updatedContent) => {
-						const useRoutesLine = updatedContent.search(
-							"// USE ROUTES"
-						);
+						const useRoutesLine =
+							updatedContent.search("// USE ROUTES");
 						const newContent = insert(
 							updatedContent,
 							"\napp.use(" + plurItem + "Route);",
