@@ -2,7 +2,7 @@ const chalk = require("chalk");
 const fs = require("fs");
 const path = require("path");
 const pluralize = require("pluralize");
-const player = require("play-sound")((opts = {}));
+// const player = require("play-sound")((opts = {}));
 const vorpal = require("vorpal")();
 
 // "node test.ts" to initialize the whole thing, then input "qb"
@@ -25,21 +25,21 @@ const delayF = (duration) => {
 };
 
 // Sounds
-const ammo = () => {
-	player.play("./sounds/9mmclip1.wav", function (err) {
-		if (err) throw err;
-	});
-};
-const armor = () => {
-	player.play("./sounds/ammopickup2.wav", function (err) {
-		if (err) throw err;
-	});
-};
-const wep = () => {
-	player.play("./sounds/gunpickup2.wav", function (err) {
-		if (err) throw err;
-	});
-};
+// const ammo = () => {
+// 	player.play("./sounds/9mmclip1.wav", function (err) {
+// 		if (err) throw err;
+// 	});
+// };
+// const armor = () => {
+// 	player.play("./sounds/ammopickup2.wav", function (err) {
+// 		if (err) throw err;
+// 	});
+// };
+// const wep = () => {
+// 	player.play("./sounds/gunpickup2.wav", function (err) {
+// 		if (err) throw err;
+// 	});
+// };
 
 // BASE
 vorpal
@@ -373,13 +373,9 @@ Example:` +
 				// QB backend doesn't exist
 				console.log(
 					chalk.red(
-						'Error: Input "' +
-							backendName +
-							`" did not match any folder name in the current directory, 
-or "/src/models/" doesn't exist in "` +
-							backendName +
-							`".`
+						'Error: no such file or directoy: "' + backendName
 					) +
+						chalk.red('"') +
 						chalk.yellow(
 							`
 Make sure you've executed the ` +
@@ -390,8 +386,8 @@ before executing the ` +
 								` command.
 Make sure you execute the ` +
 								chalk.hex("#0099AA")("qb-mdl") +
-								` command in the directory preceding your
-chosen backend directory.`
+								` command in the directory containing your
+chosen 'qb' backend directory.`
 						)
 				);
 			}
@@ -400,6 +396,26 @@ chosen backend directory.`
 		if (backendName !== "") {
 			modelCreation(backendName);
 		} else {
+			let myStr = "";
+			const directoryPath = path.join(__dirname);
+			fs.readdir(directoryPath, function (err, files) {
+				if (err) {
+					return console.log("Can't scan directory: " + err);
+				} else {
+					// Must figure out identifying if QB backend, then use dir name for prompt message
+					files.forEach(function (file) {
+						const qbPath = path.join(file + "/src/");
+						fs.readdir(qbPath, function (err, qbFiles) {
+							if (qbFiles !== undefined) {
+								console.log(file + " contains " + qbFiles);
+							}
+						});
+					});
+					// console.log(myStr);
+					callback();
+				}
+				// Find a way to make directory selectable
+			});
 			this.prompt([
 				{
 					type: "input",
@@ -419,7 +435,6 @@ Type in the name of the backend:
 			const ucItem = upperFirstLetter(item);
 			const plurItem = pluralize(item, 0);
 
-			// THIS AREA TO BE EDITED
 			await this.prompt([
 				{
 					type: "input",
